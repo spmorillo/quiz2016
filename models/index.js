@@ -5,8 +5,10 @@ var path = require('path');
 var Sequelize = require('sequelize');
 
 // Usar BBDD SQLite:
-//    DATABASE_URL = sqlite:///
-//    DATABASE_STORAGE = quiz.sqlite
+ //   DATABASE_URL = sqlite:///
+  //  DATABASE_STORAGE = quiz.sqlite
+// Usar BBDD Postgres:
+ //  DATABASE_URL = postgres://user:passwd@host:port/database
 
 var url, storage;
 
