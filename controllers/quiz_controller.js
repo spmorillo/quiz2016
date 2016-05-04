@@ -15,9 +15,10 @@ exports.load = function(req, res, next, quizId) {
         .catch(function(error) { next(error); });
 };
 
-
+//Object.keys(req.query.search)===!
 // GET /quizzes
 exports.index = function(req, res, next) {
+	if(!("search" in req.query)){
 	models.Quiz.findAll()
 		.then(function(quizzes) {
 			res.render('quizzes/index.ejs', { quizzes: quizzes});
@@ -25,6 +26,17 @@ exports.index = function(req, res, next) {
 		.catch(function(error) {
 			next(error);
 		});
+	}else{
+		models.Quiz.findAll({order: 'question ASC',
+							where: {question: {$like: "%" + req.query.search + "%"}}
+							})
+		.then(function(quizzes) {
+			res.render('quizzes/index.ejs', { quizzes: quizzes});
+		})
+		.catch(function(error) {
+			next(error);
+		});
+	}
 };
 
 
@@ -49,6 +61,7 @@ exports.check = function(req, res, next) {
 								   result: result, 
 								   answer: answer });
 };
+
 
 
 // GET /quizzes/new
@@ -82,6 +95,7 @@ exports.create = function(req, res, next) {
 		next(error);
 	});  
 };
+
 
 // GET /quizzes/:id/edit
 exports.edit = function(req, res, next) {
@@ -117,6 +131,7 @@ exports.update = function(req, res, next) {
     });
 };
 
+
 // DELETE /quizzes/:id
 exports.destroy = function(req, res, next) {
   req.quiz.destroy()
@@ -129,3 +144,4 @@ exports.destroy = function(req, res, next) {
       next(error);
     });
 };
+
