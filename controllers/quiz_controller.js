@@ -18,35 +18,63 @@ exports.load = function(req, res, next, quizId) {
 //Object.keys(req.query.search)===!
 // GET /quizzes
 exports.index = function(req, res, next) {
-	if(!("search" in req.query)){
-	models.Quiz.findAll()
-		.then(function(quizzes) {
-			res.render('quizzes/index.ejs', { quizzes: quizzes});
-		})
-		.catch(function(error) {
-			next(error);
-		});
+	if((req.params.format === "JSON" || req.params.format === "json")){
+		if("search" in req.query){
+			models.Quiz.findAll({order: 'question ASC',
+								where: {question: {$like: "%" + req.query.search + "%"}}
+								})
+			.then(function(quizzes) {
+				res.json('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}else{
+			models.Quiz.findAll()
+			.then(function(quizzes) {
+				res.json('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}
 	}else{
-		models.Quiz.findAll({order: 'question ASC',
-							where: {question: {$like: "%" + req.query.search + "%"}}
-							})
-		.then(function(quizzes) {
-			res.render('quizzes/index.ejs', { quizzes: quizzes});
-		})
-		.catch(function(error) {
-			next(error);
-		});
+		if("search" in req.query){
+			models.Quiz.findAll({order: 'question ASC',
+								where: {question: {$like: "%" + req.query.search + "%"}}
+								})
+			.then(function(quizzes) {
+				res.render('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}else{
+			models.Quiz.findAll()
+			.then(function(quizzes) {
+				res.render('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}
 	}
 };
 
 
 // GET /quizzes/:id
 exports.show = function(req, res, next) {
+	if((req.params.format === "JSON" || req.params.format === "json")){
+		var answer = req.query.answer || '';
 
-	var answer = req.query.answer || '';
-
-	res.render('quizzes/show', {quiz: req.quiz,
+		res.json('quizzes/show', {quiz: req.quiz,
 								answer: answer});
+	}else{
+		var answer = req.query.answer || '';
+
+		res.render('quizzes/show', {quiz: req.quiz,
+								answer: answer});
+	}	
 };
 
 
