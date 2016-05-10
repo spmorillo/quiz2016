@@ -69,13 +69,15 @@ exports.show = function(req, res, next) {
 	if((req.params.format === "JSON" || req.params.format === "json")){
 		var answer = req.query.answer || '';
 
-		res.json('quizzes/show', {quiz: req.quiz,
+		res.status(200).json('quizzes/show', {quiz: req.quiz,
 								answer: answer});
-	}else{
+	}else if(req.params.format === "HTML" || req.params.format === "html" || !req.params.format){
 		var answer = req.query.answer || '';
 
 		res.render('quizzes/show', {quiz: req.quiz,
 								answer: answer});
+	}else{
+		res.json("Formato no válido.");
 	}	
 };
 
