@@ -18,13 +18,13 @@ exports.load = function(req, res, next, quizId) {
 
 // GET /quizzes
 exports.index = function(req, res, next) {
-	if((req.params.format === "JSON" || req.params.format === "json")){
+	if(req.params.format === "JSON" || req.params.format === "json" ){
 		if("search" in req.query){
 			models.Quiz.findAll({order: 'question ASC',
 								where: {question: {$like: "%" + req.query.search + "%"}}
 								})
 			.then(function(quizzes) {
-				res.json('quizzes/index.ejs', { quizzes: quizzes});
+				res.status(200).json({ quizzes: quizzes});
 			})
 			.catch(function(error) {
 				next(error);
@@ -32,32 +32,34 @@ exports.index = function(req, res, next) {
 		}else{
 			models.Quiz.findAll()
 			.then(function(quizzes) {
-				res.json('quizzes/index.ejs', { quizzes: quizzes});
+				res.status(200).json({ quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}
+	}else if(req.params.format === "HTML" || req.params.format === "html" || !req.params.format){
+		if("search" in req.query){
+			models.Quiz.findAll({order: 'question ASC',
+								where: {question: {$like: "%" + req.query.search + "%"}}
+								})
+			.then(function(quizzes) {
+				res.render('quizzes/index.ejs', { quizzes: quizzes});
+			})
+			.catch(function(error) {
+				next(error);
+			});
+		}else{
+			models.Quiz.findAll()
+			.then(function(quizzes) {
+				res.render('quizzes/index.ejs', { quizzes: quizzes});
 			})
 			.catch(function(error) {
 				next(error);
 			});
 		}
 	}else{
-		if("search" in req.query){
-			models.Quiz.findAll({order: 'question ASC',
-								where: {question: {$like: "%" + req.query.search + "%"}}
-								})
-			.then(function(quizzes) {
-				res.render('quizzes/index.ejs', { quizzes: quizzes});
-			})
-			.catch(function(error) {
-				next(error);
-			});
-		}else{
-			models.Quiz.findAll()
-			.then(function(quizzes) {
-				res.render('quizzes/index.ejs', { quizzes: quizzes});
-			})
-			.catch(function(error) {
-				next(error);
-			});
-		}
+		res.json("Formato no válido.");
 	}
 };
 
