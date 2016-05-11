@@ -20,8 +20,10 @@ exports.load = function(req, res, next, quizId) {
 exports.index = function(req, res, next) {
 	if(req.params.format === "JSON" || req.params.format === "json" ){
 		if("search" in req.query){
+			var query = req.query.search;
+			query = query.replace(' ', '%');
 			models.Quiz.findAll({order: 'question ASC',
-								where: {question: {$like: "%" + req.query.search + "%"}}
+								where: {question: {$like: "%" + query + "%"}}
 								})
 			.then(function(quizzes) {
 				res.status(200).json({ quizzes: quizzes});
@@ -40,8 +42,10 @@ exports.index = function(req, res, next) {
 		}
 	}else if(req.params.format === "HTML" || req.params.format === "html" || !req.params.format){
 		if("search" in req.query){
+			var query = req.query.search;
+			query = query.replace(' ', '%');
 			models.Quiz.findAll({order: 'question ASC',
-								where: {question: {$like: "%" + req.query.search + "%"}}
+								where: {question: {$like: "%" + query + "%"}}
 								})
 			.then(function(quizzes) {
 				res.render('quizzes/index.ejs', { quizzes: quizzes});
