@@ -43,6 +43,23 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 
+/*
+app.use(function(req, res, next) {
+    var user = req.session.user;
+    var now = new Date();
+    if(!user){
+      next();
+    }else if(now - user.tiempo < 3000){
+      delete req.session.user;
+    }else if(now - user.tiempo > 3000){
+      user.tiempo = new Date();
+    }
+});
+*/
+
+
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -73,6 +90,9 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
+
 
 
 module.exports = app;
