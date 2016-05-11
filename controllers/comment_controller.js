@@ -22,19 +22,27 @@ exports.new = function(req, res, next) {
   var comment = models.Comment.build({text: ""});
 
   res.render('comments/new', { comment: comment, 
-                               quiz: req.quiz
+                               quiz: req.quiz,
+
                              });
 };
 
 
 // POST /quizes/:quizId/comments
 exports.create = function(req, res, next) {
+  
+  var authorId = req.session.user.id || "";
+  var authorId2 = req.session.user.username || "";
+
   var comment = models.Comment.build(
       { text:   req.body.comment.text,          
-        QuizId: req.quiz.id
+        QuizId: req.quiz.id,
+        AuthorId: authorId,
+        AuthorId2: authorId2
       });
 
-  comment.save()
+
+  comment.save({fields: ["text", "QuizId", "AuthorId", "AuthorId2"]})
     .then(function(comment) {
       req.flash('success', 'Comentario creado con éxito.');
       res.redirect('/quizzes/' + req.quiz.id);
