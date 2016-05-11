@@ -54,21 +54,24 @@ app.use(function(req, res, next) {
    next();
 });
 
-app.use('/', routes);
 
-/*
+
+
 app.use(function(req, res, next) {
-    var user = req.session.user;
     var now = new Date();
-    if(!user){
+    if(!req.session.user){
       next();
-    }else if(now - user.tiempo < 3000){
+    }else if((now.getTime() - req.session.user.tiempo) > 120000){
       delete req.session.user;
-    }else if(now - user.tiempo > 3000){
-      user.tiempo = new Date();
+      next();
+    }else{
+      req.session.user.tiempo = new Date().getTime();
+      next();
     }
 });
-*/
+
+
+app.use('/', routes);
 
 
 
